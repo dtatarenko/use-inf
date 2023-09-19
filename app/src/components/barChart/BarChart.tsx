@@ -1,3 +1,4 @@
+import React from 'react';
 import { BarChart } from "@sisense/sdk-ui";
 import { DimensionalQueryClient } from "@sisense/sdk-query-client";
 import { exampleData } from "./data";

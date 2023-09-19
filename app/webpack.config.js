@@ -5,7 +5,7 @@ module.exports = {
   entry: './src/index.tsx',
   output: {
     filename: 'app.js',
-    path: path.resolve(__dirname, '../dist/app'),
+    path: path.resolve(__dirname, './dist'),
   },
   resolve: {
     extensions: ['.tsx', '.ts', '.js'],
