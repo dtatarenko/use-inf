@@ -7,6 +7,7 @@ import {qqRequest} from './API';
 import {TextMessage} from './TextMessage';
 import {ChartMessage} from './ChartMessage';
 import {TableMessage} from './TableMessage';
+import { executeQuery } from '../executeQuery';
 
 export const Chat = () => {
 	const [messages, addMessage] = useMessages();
@@ -27,6 +28,51 @@ export const Chat = () => {
 
 	return (
 		<div className={styles.chat}>
+			{executeQuery({
+				"dataModel":{
+					"DataSource":"Sample ECommerce",
+					"dimensions":[
+						{
+							"name":"Commerce",
+							"attrs":[
+								{
+									"name":"AgeRange",
+									"type":"text-attribute",
+									"expression":"[Commerce.Age Range]"
+								}
+							]
+						},
+						{
+							"name":"Country",
+							"attrs":[
+								{
+									"name":"Country",
+									"type":"text-attribute",
+									"expression":"[Country.Country]"
+								},
+								{
+									"name":"CountryID",
+									"type":"numeric-attribute",
+									"expression":"[Country.Country ID]"
+								}
+							]
+						}
+					],
+					"dataOptions":{
+						"category":[
+							{
+								"name":"AgeRange",
+								"type":"string"
+							}
+						],
+						"value":[
+							{
+								"name":"AgeRange"
+							}
+						],
+						"breakBy":[]
+					}
+				}})}
 			<MessagesArea messages={messages}/>
 			<InputMessage onAddValue={addNewUserMessage}/>
 		</div>);

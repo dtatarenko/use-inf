@@ -12,16 +12,17 @@ import {
   createDimension, 
   createAttribute 
 } from '@sisense/sdk-data';
+import { stringify } from 'querystring';
 
 type Dimensions = [{
   name: string,
-  attrs: Attribute
+  attrs: any //Attribute
 }]
 
 export type executeQueryParams = {
   dataModel: {
-    DataSource: DataSource
-    dimensions: Dimensions,
+    DataSource: DataSource,
+    dimensions: any, //Dimensions,
     dataOptions: CartesianChartDataOptions,
     
     measures?: Measures,
@@ -44,15 +45,18 @@ export type Filters = [{
   value: number
 }] 
 
-const prepareDimensions = (dimenstions: Dimensions) => dimenstions.map(dimenstion => 
-  createDimension({
-      name: dimenstion.name,
-      [dimenstion.attrs.name]: createAttribute({
-        name: dimenstion.attrs.name,
-        type: dimenstion.attrs.type,
-        expression: dimenstion.attrs.expression,
+const prepareDimensions = (dimenstions: Dimensions) => dimenstions.map(dimenstion => {
+    return createDimension({
+    name: dimenstion.name,
+    ...dimenstion.attrs.reduce((a:any, v:any) => {
+      a[v.name] = createAttribute({
+          name: v.name,
+          type: v.type,
+          expression: v.expression,
       })
-  }))
+      return a;
+    }, {})});
+ })
 
 const prepareMeasures = (measuresArr: Measures) => measuresArr.map(measure => {
   switch(measure.type) {
@@ -83,7 +87,7 @@ export const executeQuery = ({
       dataSource: dataModel.DataSource,
       measures: (dataModel.measures 
       && dataModel.measures.length && [...prepareMeasures(dataModel.measures)]) || [],
-      dimensions: [...prepareDimensions(dataModel.dimensions)],
+      dimensions: [prepareDimensions(dataModel.dimensions)[0].attributes[0], prepareDimensions(dataModel.dimensions)[1].attributes[0]],
       filters: (dataModel.filters 
         && dataModel.filters.length && [...prepareFilters(dataModel.filters)]) || [],
     }
