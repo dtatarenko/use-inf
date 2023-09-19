@@ -12,15 +12,16 @@ export async function parseTemplatePrompt(
   additionalTemplates: TemplateFnPair[] = [],
 ): Promise<any> {
   if (Array.isArray(prompt))
-    return prompt.map(({role, content}) => ({role, content: parseTemplatePrompt(content, options)}));
+    return await Promise.all(prompt.map(async ({role, content}) => ({role, content: await parseTemplatePrompt(content, options)})));
 
   const {msg, selectedDimension, dimensions} = options;
   const filterColsByType = (dim: DimensionalDimension, columnType: 'numberColumns' | 'dateColumns') => {
+    console.log(`${dim.name}:${dim.attributes.concat(dim.dimensions).map(({type, name})=> `${name}~${type}`)}:${dim.dimensions.map(({type})=>type)}:`);
     if (columnType === 'numberColumns')
-        return dim.attributes.filter((a) => a.type === 'numeric');
+        return dim.attributes.filter((a) => a.type === 'numeric-attribute');
     if (columnType === 'dateColumns')
-        return dim.attributes.filter((a) => a.type === 'datetime');
-    return dim.attributes;
+        return dim.dimensions.filter((a) => a.type === 'datedimension');
+    return dim.attributes.concat(dim.dimensions);
   }
   const parseTpl = async (str: string): Promise<string> => {
     const dimToStr = (d: DimensionalDimension, i: number) =>
@@ -75,8 +76,14 @@ export async function parseTemplatePrompt(
     }
 
     return await allowedTpls.reduce(
-        async (a: Promise<string>, [reg, cb]) => await [...(await a).matchAll(reg)].reduce(
-            async (aa: any, matches: any) =>  (await aa).replace(matches[0], await cb(...matches.slice(1))), a)
+        async (a: Promise<string>, [reg, cb]) => {
+console.log(`parse: `, (await a));
+          return await [...(await a).matchAll(reg)].reduce(
+            async (aa: any, matches: any) =>  {
+console.log(`${(await aa)}.replace(${matches[0]})`);
+              return (await aa).replace(matches[0], await cb(...matches.slice(1)));
+            }, a);
+          }
           , Promise.resolve(str));
   };
   return parseTpl(prompt);

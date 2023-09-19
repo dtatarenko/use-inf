@@ -11,10 +11,9 @@ export class Nlq extends Controller {
       callback: (async (req: CustomRequest): Promise<[number, any]> => {
         try {
           const completion = await this.ai.processMessage(req.params['question']);
-          return [200, {
-            ...JSON.parse(completion)
-          }];
+          return [200, {...completion}];
         } catch(e: any) {
+console.error(e);
           return [400, { error: e.message}]
         }
       }) as ControllerMethod,

@@ -17,8 +17,9 @@ const controllers = [
     },
     // Please include at least 3, or you'll get an error (we encounter in a prompt that there should be at least 3)
     [
-      Brand as any as DimensionalDimension,    // sorry, we really had to do it ¯\_(ツ)_/¯
-      Commerce as any as DimensionalDimension,
+      // sorry, we really had to do this any to any ¯\_(ツ)_/¯
+      Commerce as any as DimensionalDimension, // first Dim should have number-type columns, again, sorry >_<
+      Brand as any as DimensionalDimension, 
       Country as any as DimensionalDimension,
     ]
   )),

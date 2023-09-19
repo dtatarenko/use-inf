@@ -6,6 +6,7 @@ import { TemplateFnPair, parseTemplatePrompt } from "../proptTemplating.js";
 import { OPENAI_DEFAULTS } from "./defaultPrompts.js";
 import { ChatCompletionMessage, OpenAiConfig, OpenAiPrompt, chatModels, completitionModels } from "./types.js";
 import { Completion, CompletionCreateParamsBase } from "openai/resources/completions";
+import { ChatCompletion } from "openai/resources/chat/index.js";
 
 export const countTokens = (prompt: string) => encode(prompt).length;
 
@@ -25,7 +26,7 @@ export class OpenAiEngine {
     if (!this.config.convertToPrompt)
       this.config.convertToPrompt = OPENAI_DEFAULTS.convertToPrompt;
     if (!this.config.determineDimensionPrompt)
-      this.config.convertToPrompt = OPENAI_DEFAULTS.determineDimensionPrompt;
+      this.config.determineDimensionPrompt = OPENAI_DEFAULTS.determineDimensionPrompt;
   }
 
 
@@ -50,7 +51,7 @@ console.log(prompt);
     if (!prompt)
       throw new Error("Can't parse Converting prompt template");
 
-    let res = await this.complete(prompt);
+    let res:any = await this.complete(prompt);
     try {
       try {
         res = JSON.parse(res);
@@ -64,7 +65,10 @@ console.log("\n\nOAI resolved in NoN JSON and in NoN JS-Object :\n\n", res, e);
       throw new Error('OAI gave some random response: ' + res);
     }
 console.log("\n\nOAI resolved \n\n", res);
-    return res;
+    return {
+      dimension: selectedDimension.name,
+      ...res,
+    };
   }
 
 
@@ -93,18 +97,20 @@ console.log(variant, reg.toString(), matched);
   }
 
   public async complete(prompt: OpenAiPrompt, options: Partial<CompletionCreateParamsBase> = {}) {
-    let res;
-    if (Array.isArray(prompt))
+    let res, response;
+    if (Array.isArray(prompt)) {
       res = await this.proceedChat(prompt, options);
-    else
+      response = res?.choices[0].message.content || '';
+    } else {
       res = await this.proceedPrompt(prompt, options);
-
+      response = res.choices[0].text;
+    }
     this.log({
       prompt,
       tokens: res.usage,
-      response: res.choices[0].text,
+      response,
     });
-    return res.choices[0].text;
+    return response;
   }
 
   private async proceedPrompt(prompt: string, options: Partial<CompletionCreateParamsBase> = {}): Promise<Completion> {
@@ -128,12 +134,14 @@ console.log("OAI", prompt, {step: 'complete', prompt, tokens: res.usage ,res: JS
     return res;
   }
 
-  private async proceedChat(prompt: ChatCompletionMessage[], options?: any): Promise<Completion> {
-    return await this.openai.completions.create({
+  private async proceedChat(prompt: ChatCompletionMessage[], options?: any): Promise<ChatCompletion> {
+    const res = await this.openai.chat.completions.create({
       model: chatModels.gpt3,
       messages: prompt,//messages.prompt1.concat(QQ[0]),
       ...options,
     });
+console.log("OAI-Chat", prompt, {step: 'complete', prompt, tokens: res.usage ,res: JSON.stringify(res, null, '  ')});
+    return res;
   }
 
   private async paraphraseDimension(d: DimensionalDimension) {
@@ -157,7 +165,7 @@ console.log({
         /\{\{paraphrase\(viewpoints\[(\d)\]\)\}\}/g,
         async (r1: string) => options.dimensions && (await this.paraphraseDimension(options.dimensions[parseInt(r1)])) || ''
       ]] : [];
-
+console.log("PARSE", prompt);
       return parseTemplatePrompt(prompt, options, openAI_specific_tpls);
     } catch(e) {
       console.error(e);

@@ -11,7 +11,7 @@ export const OPENAI_DEFAULTS = {
     + `Example 1: "can I access system" => 1. login\n`
     + `Example 2: "what do you know" => 4. list\n`
     + `Example 3: "most valuable asset?" => 6. query\n\n`
-    + `"{{qq}}" => ?\n`,
+    + `"{{msg}}" => ?\n`,
 
   determineDimensionPrompt: 
       `Available tables,descriptions and their fields are:\n`
@@ -20,7 +20,7 @@ export const OPENAI_DEFAULTS = {
     + `Example 1: "show {{viewpoints[0].name}}" => 1. {{viewpoints[0].name}}\n`
     + `Example 2: "some {{viewpoints[1].columns[0]}} in {{viewpoints[1].name}}" => 2. {{viewpoints[1].name}}\n`
     + `Example 3: "{{paraphrase(viewpoints[2])}}" => 3. {{viewpoints[2].name}}\n\n`
-    + `"{{qq}}" => ?\n`,
+    + `"{{msg}}" => ?\n`,
 
   convertToPrompt: [
     {"role": "system", "content": "You need to guess JSON query that should look like: "},
@@ -37,7 +37,7 @@ export const OPENAI_DEFAULTS = {
     {"role": "assistant", "content": `{conditions: {and:[{"{{viewpoint.numberColumns[0]}}":{operator:">", value: "5"}}]}}`},
     {"role": "user", "content": `how many different {{viewpoint.columns[0]}} we have`},
     {"role": "assistant", "content": `{groupBy: "{{viewpoint.columns[0]}}"}`},
-    {"role": "user", "content": `{{qq}}`},
+    {"role": "user", "content": `{{msg}}`},
   ],
 };
 
@@ -56,7 +56,7 @@ export const OPENAI_DEFAULTS = ({nextEngine}: Partial<EngineConfiguration>): Par
   + `Example 1: "can I access system" => 1. login\n`
   + `Example 2: "what do you know" => 4. list\n`
   + `Example 3: "most valuable asset?" => 6. query\n\n`
-  + `"{{qq}}" => ?\n`,
+  + `"{{msg}}" => ?\n`,
 * /
   determineViewpointPrompt: 
     `Available tables,descriptions and their fields are:\n`
@@ -65,7 +65,7 @@ export const OPENAI_DEFAULTS = ({nextEngine}: Partial<EngineConfiguration>): Par
   + `Example 1: "show {{viewpoints[0].name}}" => 1. {{viewpoints[0].name}}\n`
   + `Example 2: "some {{viewpoints[1].columns[0]}} in {{viewpoints[1].name}}" => 2. {{viewpoints[1].name}}\n`
   + `Example 3: "{{paraphrase(viewpoints[2])}}" => 3. {{viewpoints[2].name}}\n\n`
-  + `"{{qq}}" => ?\n`,
+  + `"{{msg}}" => ?\n`,
   convertToPrompt: ((engn): string => {
     switch(engn) {
       case EngineType.cJAQL:
@@ -84,7 +84,7 @@ export const OPENAI_DEFAULTS = ({nextEngine}: Partial<EngineConfiguration>): Par
           {"role": "assistant", "content": `{conditions: {and:[{"{{viewpoint.numberColumns[0]}}":{operator:">", value: "5"}}]}}`},
           {"role": "user", "content": `how many different {{viewpoint.columns[0]}} we have`},
           {"role": "assistant", "content": `{groupBy: "{{viewpoint.columns[0]}}"}`},
-					{"role": "user", "content": `{{qq}}`},
+					{"role": "user", "content": `{{msg}}`},
         ], null, '  ');
       case EngineType.SimplyAsk:
         return '';
