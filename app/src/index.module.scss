@@ -1,0 +1,17 @@
+body {
+  background: rgb(18, 18, 65);
+  color: rgb(255, 255, 213);
+}
+
+.app {
+  position: fixed;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 500px;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: stretch;
+}
