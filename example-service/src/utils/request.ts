@@ -3,6 +3,7 @@ import { IncomingMessage, ServerResponse } from "http";
 export type CustomRequest = IncomingMessage & {
   params: {[key: string]: string},
   path: string,
+  body: Promise<string>,
 };
 
 export type ControllerMethod = (req: CustomRequest, res: ServerResponse<IncomingMessage>) => Promise<[number, any]>;

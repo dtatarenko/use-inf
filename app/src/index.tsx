@@ -21,7 +21,7 @@ const config: SisenseContextProviderProps = {
 };
 
 const nlq = new MockNLQProvider();
-// const nlq = new CJqlNLQProvider('https://127.0.0.1:9100/', [Brand, Commerce, Category, Country]);
+//const nlq = new CJqlNLQProvider('http://127.0.0.1:9100/', [Brand, Commerce, Category, Country]);
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
 	<SisenseContextProvider

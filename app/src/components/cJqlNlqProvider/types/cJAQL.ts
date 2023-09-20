@@ -4,7 +4,7 @@ export type cJAQL = {
 	datasource: string,
 	dimension: string,
 	groupBy?: string,
-	orderBy?: {[fieldName: string]: "desc" | "ask"}[],
+	orderBy?: {[fieldName: string]: "desc" | "asc"}[]|{[fieldName: string]: "desc" | "asc"},
 	offset?: number,
 	limit?: number,
 	aggregations?: {[fieldName: string]: 'first'|'avg'|'sum'|'count'}[],

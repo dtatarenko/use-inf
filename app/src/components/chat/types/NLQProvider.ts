@@ -5,7 +5,7 @@ export interface NLQProvider {
 	request: (message: string) => Promise<QQResponse>;
 }
 
-interface QQResponse {
+export interface QQResponse {
 	table?: TableProps
 	chart?: ChartProps;
 	message?: string

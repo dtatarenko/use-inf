@@ -19,6 +19,7 @@ export class OpenAiEngine {
 
   constructor(
       protected config: OpenAiConfig,
+      protected datasource: string,
       protected dimensions: DimensionalDimension[]
   ) {
 		const {organization, apiKey} = config;
@@ -32,7 +33,7 @@ export class OpenAiEngine {
 
   public async processMessage(msg: string, selectedDimension: DimensionalDimension|null = null): Promise<ParsedResult> {
     // if engineType ~ EngineType.BasicNlq
-
+console.log(`MSG: ${msg}`);
     // TBD: determine command?
 
     if (!selectedDimension)
@@ -66,6 +67,7 @@ console.log("\n\nOAI resolved in NoN JSON and in NoN JS-Object :\n\n", res, e);
     }
 console.log("\n\nOAI resolved \n\n", res);
     return {
+      datasource: this.datasource,
       dimension: selectedDimension.name,
       ...res,
     };

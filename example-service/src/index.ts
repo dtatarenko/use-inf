@@ -5,7 +5,7 @@ import http from 'http';
 import { Controller, ControllerMethod, CustomRequest } from './utils/request.js';
 import { Nlq } from './controllers/nlq.js';
 import { OpenAiEngine } from './models/openai/openAI.js';
-import { Brand, Commerce, Country } from './data/sample-ecommerce.js';
+import { Brand, Commerce, Country, DataSource } from './data/sample-ecommerce.js';
 import { DimensionalDimension } from '@sisense/sdk-data';
 
 const port = process.env.port || 9100;
@@ -15,6 +15,7 @@ const controllers = [
       organization: process.env.org || '',
       apiKey: process.env.OPENAI_API_KEY || '',
     },
+    DataSource,
     // Please include at least 3, or you'll get an error (we encounter in a prompt that there should be at least 3)
     [
       // sorry, we really had to do this any to any ¯\_(ツ)_/¯
@@ -26,17 +27,25 @@ const controllers = [
 ];
 const server = http.createServer((request, response) => {
   console.log(`${request.method}: ${request.url}`);
+  response.setHeader('Access-Control-Allow-Origin', '*');
+  response.setHeader('Access-Control-Allow-Methods', 'OPTIONS, GET, POST');
+  response.setHeader('Access-Control-Max-Age', 2592000);
 
-  const [path, params] = (([path = '', params = '']: string[]) => [
+  const [path, params, body] = (([path = '', params = '']: string[]) => [
     path,
     params.split('&').reduce(
       (a: any, p: string) => (([k, v]) => a[k] = decodeURI(v))(p.split('=')) && a, {}
-    )
+    ),
+    (async (req) => {
+        const buffers = [];
+        for await(const chunk of req) buffers.push(chunk);
+        return Buffer.concat(buffers).toString();
+    })(request)
   ])(request?.url?.split('?')||[]);
 
   const contentType = 'application/json';
 
-  const req: CustomRequest = Object.assign(request, {params, path}) ;
+  const req: CustomRequest = Object.assign(request, {params, path, body}) ;
 
   let status = 500, content = '';
   let m: ControllerMethod|null = null;
@@ -70,4 +79,4 @@ server.on('error', function (e) {
   console.log(e);
 });
 
-console.log(`Server running at https://127.0.0.1:${port}/`);
+console.log(`Server running at http://127.0.0.1:${port}/`);

@@ -17,6 +17,18 @@ console.error(e);
           return [400, { error: e.message}]
         }
       }) as ControllerMethod,
+    }, {
+      method: "post" as "get"|"post",
+      path: ['', '/'],
+      callback: (async (req: CustomRequest): Promise<[number, any]> => {
+        try {
+          const completion = await this.ai.processMessage((await req.body));
+          return [200, {...completion}];
+        } catch(e: any) {
+console.error(e);
+          return [400, { error: e.message}]
+        }
+      }) as ControllerMethod,
     }];
   }
 }

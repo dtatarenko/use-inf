@@ -16,7 +16,9 @@ export interface Dimension {
 export interface TableProps {
 	dataSource: string;
 	filters?: Filter[],
-	columns: TableDataOptions["columns"]
+	columns: TableDataOptions["columns"] | any[],// {sort?: 'asc'|'desc'},
+  count?: number,
+  offset?: number,
 }
 
 function prepareDimension(json: any) {
