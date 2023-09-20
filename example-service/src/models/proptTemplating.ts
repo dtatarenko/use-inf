@@ -44,13 +44,13 @@ export async function parseTemplatePrompt(
         /\{\{dimensions\[(\d)\]\.(quotedColumns|columns|numberColumns|dateColumns)\[\]\}\}/g,
         (r1: string, columnType: ColumnTypes) => Promise.resolve(
             filterColsByType(dimensions[parseInt(r1)], columnType)
-              .map(({name}) => columnType == 'quotedColumns' ? `${name}` : name).join(',')
+              .map(({name}) => columnType == 'quotedColumns' ? `"${name}"` : name).join(',')
         ),
       ],
       [
         /\{\{dimensions\[(\d)\]\.(quotedColumns|columns|numberColumns|dateColumns)\[(\d)\]\}\}/g,
         (r1: string, columnType: ColumnTypes, r2: string) => Promise.resolve(
-            (name => columnType == 'quotedColumns' ? `${name}` : name)(filterColsByType(dimensions[parseInt(r1)], columnType)[parseInt(r2)].name)
+            (name => columnType == 'quotedColumns' ? `"${name}"` : name)(filterColsByType(dimensions[parseInt(r1)], columnType)[parseInt(r2)].name)
         ),
       ],
     ].forEach((tpl: any) => allowedTpls.push(tpl));
@@ -61,13 +61,13 @@ export async function parseTemplatePrompt(
         /\{\{dimension\.(quotedColumns|columns|numberColumns|dateColumns)\[\]\}\}/g,
         (columnType: ColumnTypes) => Promise.resolve(
           filterColsByType(selectedDimension, columnType)
-            .map(({name}) => columnType == 'quotedColumns' ? `${name}` : name).join(',')
+            .map(({name}) => columnType == 'quotedColumns' ? `"${name}"` : name).join(',')
         )
       ],
       [
         /\{\{dimension\.(quotedColumns|columns|numberColumns|dateColumns)\[(\d)\]\}\}/g,
         (columnType: ColumnTypes, r1: string) => Promise.resolve(
-          (name => columnType == 'quotedColumns' ? `${name}` : name)(filterColsByType(selectedDimension, columnType)[parseInt(r1)].name)
+          (name => columnType == 'quotedColumns' ? `"${name}"` : name)(filterColsByType(selectedDimension, columnType)[parseInt(r1)].name)
         ),
       ],
     ].forEach((tpl: any) => allowedTpls.push(tpl));

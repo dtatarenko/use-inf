@@ -52,5 +52,5 @@ export const CopyTableBtn = ({containerRef}: {containerRef: React.RefObject<HTML
   }
 
 
-  return <div className={styles.copyButton} onClick={copyTable}>🖼<canvas style={{display: 'none'}}></canvas></div>;
+  return <div className={styles.copyButton} onClick={copyTable}>☶<canvas style={{display: 'none'}}></canvas></div>;
 }

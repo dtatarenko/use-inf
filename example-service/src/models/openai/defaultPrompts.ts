@@ -41,7 +41,7 @@ export const OPENAI_DEFAULTS = {
       `{conditions: {and:[{"{{dimension.numberColumns[0]}}":{operator:">", value: "5"}}]}, fields:[{{dimension.quotedColumns[]}}], display: "table"}`
     },
     {"role": "user", "content": `how many different {{dimension.columns[0]}} we have`},
-    {"role": "assistant", "content": `{groupBy: "{{dimension.columns[0]}}", aggregations: [{{dimension.columns[0]}}: "count"], fields:[{{dimension.columns[0]}}], display: "piechart"}`},
+    {"role": "assistant", "content": `{groupBy: "{{dimension.columns[0]}}", aggregations: [{{dimension.columns[0]}}: "count"], fields:[{{dimension.quotedColumns[0]}}], display: "piechart"}`},
     {"role": "user", "content": `{{msg}}`},
   ],
 };

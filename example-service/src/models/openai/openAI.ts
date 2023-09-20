@@ -39,7 +39,7 @@ console.log(`MSG: ${msg}`);
     if (!selectedDimension)
       selectedDimension = await this.determineDimension(msg);
     if (!selectedDimension)
-      throw new Error('We were not able to determine dimension, awailable are: ' + this.dimensions.map(({name}) => name).join(','));
+      throw new Error('We were not able to determine the dataset, and available are: ' + this.dimensions.map(({name}) => name).join(','));
 
     if (!this.config.convertToPrompt)
       throw new Error('Devs were too laizy to comeup with a correct prompt');
@@ -148,7 +148,11 @@ console.log("OAI-Chat", prompt, {step: 'complete', prompt, tokens: res.usage ,re
 
   private async paraphraseDimension(d: DimensionalDimension) {
     const prompt = `Come up with conciese and uncommon way requesting dataset: ${d.name} ${d.description ? `(${d.description})` : ''}`;
-    const res = (await this.complete(prompt, {model: completitionModels.babbage, temperature: 0.4}))?.trim() || '';
+    return this.paraphrase(prompt, true);
+  }
+
+  private async paraphrase(prompt: string, strict = false) {
+    const res = (await this.complete(strict ? prompt : `Paraphrase: ${prompt}`, {model: completitionModels.babbage, temperature: 0.4}))?.trim() || '';
 console.log({
       step: "paraphrasing",
       prompt,

@@ -1,12 +1,14 @@
 import { orderBy } from '@sisense/sdk-ui/dist/chart-data-processor/table_processor';
-import { NLQProvider, QQResponse } from '../chat/types/NLQProvider';
+import { EndpointDescription, NLQProvider, QQResponse } from '../chat/types/NLQProvider';
 import { cJAQL } from './types/cJAQL';
 import { Attribute, BaseMeasure, Dimension, Measure, createMeasure } from '@sisense/sdk-data';
 import { ChartType } from '@sisense/sdk-ui';
 
 
 export class CJqlNLQProvider implements NLQProvider {
-	constructor(private endpoint: string, private dimensions: Dimension[]) {
+	constructor(private endpoint: EndpointDescription, private dimensions: Dimension[]) {
+      if (endpoint.type !== 'cJAQL')
+        throw new Error('Your should provide  cJAQL compatible API endpoint');
 	}
 
 	getDimension(name: string) {
@@ -33,7 +35,7 @@ export class CJqlNLQProvider implements NLQProvider {
 	async request(message: string): Promise<QQResponse> {
     let cjaql: cJAQL|null = null;
     try {
-		  const response = await fetch(this.endpoint, {method: "POST", body: message, redirect: 'follow'});
+		  const response = await fetch(this.endpoint.endpoint, {method: "POST", body: message, redirect: 'follow'});
 		  cjaql = (await response.json()) as cJAQL;
 console.log("cjaql", cjaql);
     } catch(e: any) {
@@ -68,22 +70,18 @@ console.log(dimension.attributes.concat(dimension.dimensions));
           if (ex) return ex;
           const attr = findAttrDim(nm);
           if (attr) {
-console.log(`ADDD "${nm}"`);
             a.push(attr);
             return attr;
           }
         }
         if (typeof fld == 'string') {
-  console.log(`find ${fld}  A=`, a, findAttr(fld));
           findAttr(fld);
         } else {
-console.log("entries", Object.entries(fld));
           Object.entries(fld).map(([k, v]):any => {
             const ex = findAttr(k);
             if (ex) ex.aggregation = v;
           });
         }
-console.log(`A   ${fld}`, a);
         return a;
 			}, [] as (Measure|BaseMeasure)[]);
 

@@ -21,12 +21,19 @@ const config: SisenseContextProviderProps = {
 };
 
 //const nlq = new MockNLQProvider();
-const nlq = new CJqlNLQProvider('http://127.0.0.1:9100/', [Brand, Commerce, Category, Country]);
+const nlq = new CJqlNLQProvider(
+  {endpoint:'http://127.0.0.1:9100/', type: 'cJAQL'},
+  [Brand, Commerce, Category, Country]
+);
 
+const renderCustomCode = () => {
+    return null;
+}
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
 	<SisenseContextProvider
 		{...config}
 	>
+    {renderCustomCode()}
 		<div className={styles.app}>
 			<Chat nlq={nlq}></Chat>
 		</div>

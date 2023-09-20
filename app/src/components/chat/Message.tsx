@@ -8,5 +8,5 @@ export interface MessageProps {
 }
 
 export const Message = ({content, income}:MessageProps) => {
-	return (<div className={`${styles.message} ${income ? styles.incomeMessage : ''}`}>{content}</div>)
+	return (<div className={`${styles.message} ${income ? styles.incomeMessage : styles.userMessage}`}>{content}</div>)
 }

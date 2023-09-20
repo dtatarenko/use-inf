@@ -29,5 +29,5 @@ export const CopyCodeBtn = (children:any) => {
   }
 
 
-  return <div className={styles.copyButton} onClick={copyCode}>🖼<canvas style={{display: 'none'}}></canvas></div>;
+  return <div className={styles.copyButton} onClick={copyCode}>⚒<canvas style={{display: 'none'}}></canvas></div>;
 }
