@@ -1,6 +1,6 @@
 import React from 'react';
 import {useExecuteQuery} from "@sisense/sdk-ui";
-import * as DM from "../sample-ecommerce";
+import * as DM from "../../data/sample-ecommerce";
 import {measures, filters, createAttribute} from "@sisense/sdk-data";
 import {Table, TableDataOptions} from "@sisense/sdk-ui";
 import {DataSource, Attribute, Filter, Measure} from '@sisense/sdk-data';

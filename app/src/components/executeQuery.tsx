@@ -1,6 +1,6 @@
 import React from 'react';
 import { useExecuteQuery } from "@sisense/sdk-ui";
-import * as DM from "./sample-ecommerce";
+import * as DM from "../data/sample-ecommerce";
 import { BarChart, CartesianChartDataOptions } from "@sisense/sdk-ui";
 import { 
   measures, 
@@ -76,7 +76,7 @@ const prepareFilters = (filtersArr: Filters) => filtersArr.map(filter => {
   }
 })
 
-export const executeQuery = ({
+export const ExecuteQuery = ({
   dataModel,
   chartType,
   errorMsg = 'Error',

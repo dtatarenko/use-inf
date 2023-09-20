@@ -1,5 +1,4 @@
 import React from 'react'
-import {exampleData} from '../barChart/data';
 import {createAttribute} from '@sisense/sdk-data';
 import {ChartProps} from './ChartMessage';
 import {TableProps} from './TableMessage';
@@ -60,8 +59,7 @@ export async function qqRequest(message: string): Promise<QQResponse> {
 				}
 			}
 		}
-	}
-	if (message.includes('table')) {
+	} else if (message.includes('table')) {
 		return {
 			table: {
 				dataSource: 'Sample ECommerce',
@@ -86,7 +84,11 @@ export async function qqRequest(message: string): Promise<QQResponse> {
 				],
 			}
 		};
-	} else {
+	} else if (message.includes('example')) {
+    return {
+			debug: 'example-data'
+		};
+  } else {
 		return {
 			message: 'whatever'
 		};

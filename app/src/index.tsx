@@ -8,7 +8,6 @@ import {
 } from "@sisense/sdk-ui";
 
 import {Chat} from "./components/chat/Chat";
-import {BarChartExample} from "./components/barChart/BarChart";
 
 import styles from './index.module.scss'
 
@@ -25,8 +24,6 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
 		<div className={styles.app}>
 			<Chat></Chat>
 		</div>
-
-		{/*<BarChartExample/>*/}
 
 	</SisenseContextProvider>
 );
