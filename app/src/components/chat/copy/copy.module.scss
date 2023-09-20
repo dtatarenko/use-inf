@@ -1,9 +1,13 @@
-.message-copy-wrapper .message-copy-buttons{
+.messageCopyWrapper{
+  min-width: 400px;
+}
+.messageCopyWrapper .messageCopyButtons {
   display: flex;
   flex-direction: row;
   justify-content: space-evenly;
+  width: 100%;
 }
-.message-copy-wrapper .message-copy-buttons .copy-button {
+.copyButton {
   display: inline-block;
   border-radius: 25px;
   height: 25px;
