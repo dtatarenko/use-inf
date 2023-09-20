@@ -9,14 +9,7 @@ export const CopyButtonsContainer = ({children}: CopyButtonsContainerProps) => {
   return (<div className="message-copy-wrapper" ref={containerRef}>
     {children}
     <div className="message-copy-buttons">
-
+      <CopyImageBtn containerRef={containerRef} />
     </div>
   </div>)
-}
-
-const CopyImageBtn = ({ref}: {ref: React.RefObject<HTMLDivElement>}) => {
-  const copyRefCanvas = () => {
-    ref.current
-  }
-  return <div className="copy-button" onClick={copyRefCanvas}>🖼</div>;
 }
