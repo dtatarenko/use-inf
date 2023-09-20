@@ -14,7 +14,7 @@ export class Nlq extends Controller {
           return [200, {...completion}];
         } catch(e: any) {
 console.error(e);
-          return [400, { error: e.message}]
+          return [200, { error: e.message}]
         }
       }) as ControllerMethod,
     }, {
@@ -26,7 +26,7 @@ console.error(e);
           return [200, {...completion}];
         } catch(e: any) {
 console.error(e);
-          return [400, { error: e.message}]
+          return [200, { error: e.message}]
         }
       }) as ControllerMethod,
     }];

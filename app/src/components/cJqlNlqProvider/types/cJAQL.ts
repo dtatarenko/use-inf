@@ -10,5 +10,5 @@ export type cJAQL = {
 	aggregations?: {[fieldName: string]: 'first'|'avg'|'sum'|'count'}[],
 	conditions?: cJAQLCondition,
   fields?: string[],
-  display?: 'table'|'barchart'|'piechart'|'areachart',
+  display?: 'table'|'barchart'|'piechart'|'areachart'|'linechart',
 };

@@ -1,5 +1,5 @@
 import React from 'react';
-import {useExecuteQuery} from "@sisense/sdk-ui";
+import {AreaChart, ChartType, LineChart, PieChart, useExecuteQuery} from "@sisense/sdk-ui";
 import * as DM from "../../data/sample-ecommerce";
 import {measures, filters, createAttribute} from "@sisense/sdk-data";
 import {BarChart, CartesianChartDataOptions} from "@sisense/sdk-ui";
@@ -16,6 +16,7 @@ export interface ChartProps {
 	dimensions: Dimension[];
 	measures?: Measure[],
 	filters?: Filter[],
+  chartType?: ChartType,
 
 	dataOptions: CartesianChartDataOptions
 }
@@ -29,6 +30,7 @@ export const ChartMessage = ({
 								 dimensions,
 								 measures = [],
 								 filters = [],
+                 chartType,
 								 dataOptions
 							 }: ChartProps) => {
 	const {data, isLoading, isError} = useExecuteQuery({
@@ -44,7 +46,16 @@ export const ChartMessage = ({
 		return <div>Error</div>;
 	}
 	if (data) {
-		return <BarChart dataSet={data} dataOptions={dataOptions}/>
+    switch(chartType) {
+      case 'area':
+        return <AreaChart dataSet={data} dataOptions={dataOptions}/>
+      case 'pie':
+        return <PieChart dataSet={data} dataOptions={dataOptions}/>
+      case 'line':
+        return <LineChart dataSet={data} dataOptions={dataOptions}/>
+      default:
+		    return <BarChart dataSet={data} dataOptions={dataOptions}/>
+    }
 	}
 	return null;
 }
