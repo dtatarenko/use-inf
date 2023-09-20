@@ -21,10 +21,7 @@ const config: SisenseContextProviderProps = {
 };
 
 //const nlq = new MockNLQProvider();
-const nlq = new CJqlNLQProvider(
-  {endpoint:'http://127.0.0.1:9100/', type: 'cJAQL'},
-  [Brand, Commerce, Category, Country]
-);
+const nlq = new CJqlNLQProvider({endpoint:'http://127.0.0.1:9100/', type: 'cJAQL'}, [Brand, Commerce, Category, Country]);
 
 const renderCustomCode = () => {
     return null;

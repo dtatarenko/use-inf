@@ -11,7 +11,7 @@ export const CopyCodeBtn = (children:any) => {
     
     let { type, props } = children.children;
 
-    const plainTextString = type.toString();
+    const plainTextString = '';// `(${type.toString().replace(/react_\d\.default/, 'React')})\n(${JSON.stringify(props)})`;
 
     try {
         await navigator.clipboard.write([

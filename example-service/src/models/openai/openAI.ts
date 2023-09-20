@@ -39,7 +39,7 @@ console.log(`MSG: ${msg}`);
     if (!selectedDimension)
       selectedDimension = await this.determineDimension(msg);
     if (!selectedDimension)
-      throw new Error('We were not able to determine the dataset, and available are: ' + this.dimensions.map(({name}) => name).join(','));
+      throw new Error('Sorry, wasn\'t able to determine the dataset, and available are: ' + this.dimensions.map(({name}) => name).join(','));
 
     if (!this.config.convertToPrompt)
       throw new Error('Devs were too laizy to comeup with a correct prompt');

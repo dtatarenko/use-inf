@@ -23,10 +23,10 @@ export class CJqlNLQProvider implements NLQProvider {
 		if (!cjaql.orderBy) return null;
     const attribs = dimension.attributes.concat(dimension.dimensions).map(({name}) => name);
     const order = (Array.isArray(cjaql.orderBy) ? cjaql.orderBy: [cjaql.orderBy]).reduce(
-      (a, o) => (([k, v]:any) => {
-        if (attribs.includes(k)) a[k] = v;
-        return a;
-      })(Object.entries(o)),
+      (a, o) => Object.entries(o).reduce((aa, [k, v]:any) => {
+        if (attribs.includes(k)) aa[k] = v;
+        return aa;
+      }, a),
       {}
     );
 		return order;
@@ -37,9 +37,8 @@ export class CJqlNLQProvider implements NLQProvider {
     try {
 		  const response = await fetch(this.endpoint.endpoint, {method: "POST", body: message, redirect: 'follow'});
 		  cjaql = (await response.json()) as cJAQL;
-console.log("cjaql", cjaql);
+console.log(" --- cJAQL", cjaql);
     } catch(e: any) {
-console.log("екн ERROR", e)
       if (e.response) {
         return {message: (await e.response.json()).error || "Something went wrong :(" }
       }
@@ -53,18 +52,17 @@ console.log("екн ERROR", e)
 		const result: Awaited<ReturnType<NLQProvider["request"]>> = {}
 
 		const dimension = this.getDimension(cjaql.dimension);
-console.log("cjaql DIm = ", dimension);
-
     const orderBy = this.getOrderBy(dimension, cjaql);
 
 		if (cjaql.display !== 'table') {
       const findAttrDim = (nm:string):any => dimension.attributes.concat(dimension.dimensions).find(({name}) => name == nm);
-console.log(dimension.attributes.concat(dimension.dimensions));
+
       const groupByAttrName = Array.isArray(cjaql.groupBy) ? cjaql.groupBy[0] : cjaql.groupBy;
 			let groupByDimension = groupByAttrName && findAttrDim(groupByAttrName);
-      if (!groupByDimension)
-        groupByDimension = dimension.attributes[0];
-      const fields: (Measure|BaseMeasure)[] = ((cjaql.fields || []) as any[]).concat(cjaql.aggregations).reduce((a, fld: string | {[key: string]: string}) => {
+
+      //if (!groupByDimension) groupByDimension = dimension.attributes[0];
+
+      const fields: (Measure|BaseMeasure)[] = ((cjaql.fields || []) as any[]).concat(cjaql.aggregations || []).reduce((a, fld: string | {[key: string]: string}) => {
         const findAttr = (nm: string) => {
           const ex = a.find(({name}: any) => name == nm);
           if (ex) return ex;
@@ -85,16 +83,12 @@ console.log(dimension.attributes.concat(dimension.dimensions));
         return a;
 			}, [] as (Measure|BaseMeasure)[]);
 
-			result.chart = {
+      const chart: any = {
         chartType: (({barchart: "bar", linechart: "line", areachart: "area", piechart: "pie"})[cjaql.display || "barchart"] as ChartType) || "barchart",
 				dataSource: cjaql.datasource,
 				dimensions: (fields as any[]).map(({name, type, expression}) => ({name, type, expression})),
 				dataOptions: {
-					category: [{
-						name: groupByDimension?.name,
-						type: groupByDimension?.type
-					}],
-					value: fields.map((m: any) => {
+          value: fields.map((m: any) => {
             const measure: any = {name: m.name};
             if (orderBy && orderBy[m.name]) measure.sortType = orderBy[m.name] == 'asc' ? 'sortAsc' : 'sortDesc';
             if (m.aggregation)
@@ -102,16 +96,25 @@ console.log(dimension.attributes.concat(dimension.dimensions));
             return measure;
           }),
           breakBy: [], //Array.isArray(cjaql.groupBy) ? cjaql.groupBy : [cjaql.groupBy],
-				}
-			};
+        }};
+        chart.dataOptions.category = groupByDimension ? [{
+          name: groupByDimension?.name,
+          type: groupByDimension?.type
+        }] : [{
+          name: fields[0].name,
+          type: fields[0].type
+        }];
+			result.chart = chart;
 		} else {
       result.table = {
         dataSource: cjaql.datasource,
-        columns: dimension.attributes.map(({name, type, expression}) => {
-          const res :any = {name, type, expression} 
-          if (orderBy && orderBy[name]) res.sortType = orderBy[name] == 'asc' ? 'sortAsc' : 'sortDesc';
-          return res;
-        }),
+        columns: dimension.attributes
+          .filter((a) => cjaql!.fields ? cjaql!.fields.includes(a.name) : true)
+          .map(({name, type, expression}) => {
+            const res :any = {name, type, expression} 
+            if (orderBy && orderBy[name]) res.sortType = orderBy[name] == 'asc' ? 'sortAsc' : 'sortDesc';
+            return res;
+          }),
       };
       if (cjaql.limit)
         result.table!.count = cjaql.limit;
@@ -119,7 +122,7 @@ console.log(dimension.attributes.concat(dimension.dimensions));
         result.table!.offset = cjaql.offset;
     }
 
-console.log("CSDK:", result);
+console.log("--- CSDK:", result);
 		return result;
 	}
 }

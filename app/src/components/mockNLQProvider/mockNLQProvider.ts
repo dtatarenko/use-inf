@@ -1,3 +1,4 @@
+import { createFilter } from '@sisense/sdk-data';
 import {NLQProvider} from '../chat/types/NLQProvider';
 
 const wait = () => new Promise(resolve => setTimeout(resolve, 300));
@@ -21,7 +22,22 @@ export class MockNLQProvider implements NLQProvider {
 						name: 'Revenue',
 						type: 'numeric-attribute',
 						expression: '[Commerce.Revenue]',
-					}],
+					}],/*
+          filters: [
+
+            createFilter({
+              attribute: {
+                name: 'Revenue',
+                type: 'numeric-attribute',
+                expression: '[Commerce.Revenue]',
+              },
+              operatorA: 'from',
+              valueA: 1000,
+              operatorB: 'to',
+              valueB: 10000,
+            })
+          ],
+          */
 					dataOptions: {
 						"category": [
 							{

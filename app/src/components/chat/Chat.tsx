@@ -7,7 +7,6 @@ import {TextMessage} from './TextMessage';
 import {ChartMessage} from './ChartMessage';
 import {TableMessage} from './TableMessage';
 import {ExecuteQuery} from '../executeQuery';
-import exampleData from "../../data/example-data";
 import {CopyButtonsContainer} from "./copy/CopyButtonsContainer";
 import {NLQProvider} from './types/NLQProvider';
 
@@ -38,8 +37,6 @@ export const Chat = ({nlq}: ChatProps) => {
 					</CopyButtonsContainer>,
 					true
 				);
-			} else if (answer.debug === 'example-data') {
-				addMessage(<ExecuteQuery {...(exampleData as any)} />, true);
 			}
 		});
 	}
