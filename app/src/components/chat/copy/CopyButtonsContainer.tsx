@@ -1,5 +1,6 @@
 import React, { useRef } from "react";
 import { CopyImageBtn } from "./CopyImageBtn";
+import { DownloadImageBtn } from "./DownloadImageBtn";
 
 import styles from "./copy.module.scss";
 
@@ -14,6 +15,7 @@ export const CopyButtonsContainer = ({children}: CopyButtonsContainerProps) => {
       {children}
     </div>
     <div className={styles.messageCopyButtons}>
+      <DownloadImageBtn containerRef={containerRef} />
       <CopyImageBtn containerRef={containerRef} />
     </div>
   </div>)

@@ -12,10 +12,16 @@ export const CopyImageBtn = ({containerRef}: {containerRef: React.RefObject<HTML
     }
 
     const dataUrl = await domtoimage.toPng(containerRef.current, { quality: 0.95 });
-    const link = document.createElement('a');
-    link.download = 'csdk-result.png';
-    link.href = dataUrl;
-    link.click();
+    try {
+      await navigator.clipboard.write([
+        new ClipboardItem({
+          'image/png': await fetch(dataUrl).then((r) => r.blob()),
+        }),
+      ]);
+      alert("The image now in a clipboard!");
+    } catch (error) {
+      console.error(error);
+    }
   }
   return <div className={styles.copyButton} onClick={copyRefCanvas}>🖼<canvas style={{display: 'none'}}></canvas></div>;
 }
