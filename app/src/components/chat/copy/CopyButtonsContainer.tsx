@@ -9,8 +9,10 @@ export type CopyButtonsContainerProps = {
 export const CopyButtonsContainer = ({children}: CopyButtonsContainerProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
-  return (<div className={styles.messageCopyWrapper} ref={containerRef}>
-    {children}
+  return (<div className={styles.messageCopyWrapper}>
+    <div ref={containerRef}>
+      {children}
+    </div>
     <div className={styles.messageCopyButtons}>
       <CopyImageBtn containerRef={containerRef} />
     </div>
