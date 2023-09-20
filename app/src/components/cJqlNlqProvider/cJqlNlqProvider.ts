@@ -1,7 +1,7 @@
 import { orderBy } from '@sisense/sdk-ui/dist/chart-data-processor/table_processor';
 import { NLQProvider, QQResponse } from '../chat/types/NLQProvider';
 import { cJAQL } from './types/cJAQL';
-import { Dimension } from '@sisense/sdk-data';
+import { Attribute, BaseMeasure, Dimension, Measure, createMeasure } from '@sisense/sdk-data';
 
 
 export class CJqlNLQProvider implements NLQProvider {
@@ -37,7 +37,7 @@ export class CJqlNLQProvider implements NLQProvider {
 console.log("cjaql", cjaql);
     } catch(e: any) {
       if (e.response) {
-        return {message: (await e.response.json()).message}
+        return {message: (await e.response.json()).error || "Something went wrong :(" }
       }
     }
     if (cjaql === null)
@@ -50,31 +50,50 @@ console.log("cjaql DIm = ", dimension);
 
     const orderBy = this.getOrderBy(dimension, cjaql);
 
-		if (cjaql.groupBy && cjaql.aggregations) {
-			const groupByDimension = this.getDimension(cjaql.groupBy);
-			const aggDimensions = cjaql.aggregations.map((aggregation) => {
-				const fields = Object.keys(aggregation);
-				return this.getDimension(fields[0]);
-			});
+		if (cjaql.display !== 'table') {
+      const groupByAttrName = Array.isArray(cjaql.groupBy) ? cjaql.groupBy[0] : cjaql.groupBy;
+			let groupByDimension = dimension.attributes.find(({name}) => name == groupByAttrName);
+      if (!groupByDimension)
+        groupByDimension = dimension.attributes[0];
+      const fields: (Measure|BaseMeasure)[] = ((cjaql.fields || []) as any[]).concat(cjaql.aggregations).reduce((a, fld: string | {[key: string]: string}) => {
+        const findAttr = (nm: string, add = true) => {
+          const ex = a.find(({name}: any) => name == nm);
+          if (ex || !add) return ex;
+          const attr = dimension.attributes.find(({name}) => name == nm);
+          if (attr) {
+            a.push(attr);
+            return attr;
+          }
+        }
+        if (typeof fld == 'string') {
+          findAttr(fld);
+        } else {
+console.log("entries", Object.entries(fld));
+          Object.entries(fld).map(([k, v]):any => {
+            const ex = findAttr(k, false);
+            if (ex) ex.aggregation = v;
+          });
+        }
+console.log("A", a);
+        return a;
+			}, [] as (Measure|BaseMeasure)[]);
 
 			result.chart = {
 				dataSource: cjaql.datasource,
-				dimensions: [{
-					name: dimension?.name as string,
-					type: dimension?.type as string,
-					expression: dimension?.expression as string
-				}],
-
+				dimensions: (fields as any[]).map(({name, type, expression}) => ({name, type, expression})),
 				dataOptions: {
 					category: [{
 						name: groupByDimension?.name,
 						type: groupByDimension?.type
 					}],
-					value: aggDimensions.map((dimension) => ({
-						name: dimension.name,
-						aggregation: (cjaql!.aggregations && cjaql!.aggregations[dimension.name as any]) as any,
-					})),
-          breakBy: []
+					value: fields.map((m: any) => {
+            const measure: any = {name: m.name};
+            if (orderBy && orderBy[m.name]) measure.sortType = orderBy[m.name] == 'asc' ? 'sortAsc' : 'sortDesc';
+            if (m.aggregation)
+              measure.aggregation = m.aggregation;
+            return measure;
+          }),
+          breakBy: [], //Array.isArray(cjaql.groupBy) ? cjaql.groupBy : [cjaql.groupBy],
 				}
 			};
 		} else {
@@ -92,24 +111,6 @@ console.log("cjaql DIm = ", dimension);
         result.table!.offset = cjaql.offset;
     }
 
-//
-// "category": [
-// 	{
-// 		"name": "Gender",
-// 		"type": "string"
-// 	}
-// ],
-// 	"value": [
-// 	{
-// 		"name": "Quantity",
-// 		"aggregation": "sum"
-// 	},
-// 	{
-// 		"name": "Revenue",
-// 		"aggregation": "sum"
-// 	}
-// ],
-// 	"breakBy": []
 console.log("CSDK:", result);
 		return result;
 	}

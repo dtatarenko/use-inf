@@ -20,8 +20,8 @@ const config: SisenseContextProviderProps = {
 	token: env.SISENSE_API_TOKEN,
 };
 
-const nlq = new MockNLQProvider();
-//const nlq = new CJqlNLQProvider('http://127.0.0.1:9100/', [Brand, Commerce, Category, Country]);
+//const nlq = new MockNLQProvider();
+const nlq = new CJqlNLQProvider('http://127.0.0.1:9100/', [Brand, Commerce, Category, Country]);
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
 	<SisenseContextProvider

@@ -1,5 +1,6 @@
-import { DimensionalDimension } from '@sisense/sdk-data';
+import { Attribute, DimensionalDimension } from '@sisense/sdk-data';
 
+type ColumnTypes = 'numberColumns' | 'dateColumns' | 'quotedColumns' | 'columns';
 export type TemplateFnPair = [RegExp, (...args: any[]) => Promise<string>];
 export async function parseTemplatePrompt(
   prompt: string | {role: string, content: string}[],
@@ -15,7 +16,7 @@ export async function parseTemplatePrompt(
     return await Promise.all(prompt.map(async ({role, content}) => ({role, content: await parseTemplatePrompt(content, options)})));
 
   const {msg, selectedDimension, dimensions} = options;
-  const filterColsByType = (dim: DimensionalDimension, columnType: 'numberColumns' | 'dateColumns') => {
+  const filterColsByType = (dim: DimensionalDimension, columnType: ColumnTypes): Attribute[] => {
     if (columnType === 'numberColumns')
         return dim.attributes.filter((a) => a.type === 'numeric-attribute');
     if (columnType === 'dateColumns')
@@ -40,16 +41,16 @@ export async function parseTemplatePrompt(
         (r1: string, r2: keyof DimensionalDimension) => Promise.resolve(`${dimensions[parseInt(r1)][r2]}`),
       ],
       [
-        /\{\{dimensions\[(\d)\]\.(columns|numberColumns|dateColumns)\[\]\}\}/g,
-        (r1: string, columnType: 'numberColumns' | 'dateColumns') => Promise.resolve(
+        /\{\{dimensions\[(\d)\]\.(quotedColumns|columns|numberColumns|dateColumns)\[\]\}\}/g,
+        (r1: string, columnType: ColumnTypes) => Promise.resolve(
             filterColsByType(dimensions[parseInt(r1)], columnType)
-              .map(({name}) => name).join(',')
+              .map(({name}) => columnType == 'quotedColumns' ? `${name}` : name).join(',')
         ),
       ],
       [
-        /\{\{dimensions\[(\d)\]\.(columns|numberColumns|dateColumns)\[(\d)\]\}\}/g,
-        (r1: string, columnType: 'numberColumns' | 'dateColumns', r2: string) => Promise.resolve(
-            filterColsByType(dimensions[parseInt(r1)], columnType)[parseInt(r2)].name
+        /\{\{dimensions\[(\d)\]\.(quotedColumns|columns|numberColumns|dateColumns)\[(\d)\]\}\}/g,
+        (r1: string, columnType: ColumnTypes, r2: string) => Promise.resolve(
+            (name => columnType == 'quotedColumns' ? `${name}` : name)(filterColsByType(dimensions[parseInt(r1)], columnType)[parseInt(r2)].name)
         ),
       ],
     ].forEach((tpl: any) => allowedTpls.push(tpl));
@@ -57,16 +58,16 @@ export async function parseTemplatePrompt(
     if (selectedDimension) [
       [/\{\{dimension\.(name|description)\}\}/g, (r1: keyof DimensionalDimension) => Promise.resolve(`${selectedDimension[r1]}`)],
       [
-        /\{\{dimension\.(columns|numberColumns|dateColumns)\[\]\}\}/g,
-        (columnType: 'numberColumns' | 'dateColumns') => Promise.resolve(
+        /\{\{dimension\.(quotedColumns|columns|numberColumns|dateColumns)\[\]\}\}/g,
+        (columnType: ColumnTypes) => Promise.resolve(
           filterColsByType(selectedDimension, columnType)
-            .map(({name}) => name).join(',')
+            .map(({name}) => columnType == 'quotedColumns' ? `${name}` : name).join(',')
         )
       ],
       [
-        /\{\{dimension\.(columns|numberColumns|dateColumns)\[(\d)\]\}\}/g,
-        (columnType: 'numberColumns' | 'dateColumns', r1: string) => Promise.resolve(
-          filterColsByType(selectedDimension, columnType)[parseInt(r1)].name
+        /\{\{dimension\.(quotedColumns|columns|numberColumns|dateColumns)\[(\d)\]\}\}/g,
+        (columnType: ColumnTypes, r1: string) => Promise.resolve(
+          (name => columnType == 'quotedColumns' ? `${name}` : name)(filterColsByType(selectedDimension, columnType)[parseInt(r1)].name)
         ),
       ],
     ].forEach((tpl: any) => allowedTpls.push(tpl));

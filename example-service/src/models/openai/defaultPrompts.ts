@@ -25,18 +25,23 @@ export const OPENAI_DEFAULTS = {
   convertToPrompt: [
     {"role": "system", "content": "You need to guess JSON query that should look like: "},
     {"role": "system", "content":
-          "{groupBy?: [fieldName],"
-        + "orderBy?: {[fieldName: string]: desc| ask}[],"
+          "{groupBy?: <fieldName>[],"
+        + "orderBy?: {[<fieldName>: string]: desc| ask}[],"
         + "offset?: number,"
         + "limit?: number,"
-        + "aggregations?: [{[fieldName]: /(first|avg|sum|count)/}], "
-        + "conditions?: {/(and|or)/:[{[fieldName]: {operator: /(>|<|=|!=|>=|<=|like|in|except)/, value}}]}}"},
+        + "aggregations?: [{[<fieldName>]: /(first|avg|sum|count)/}], "
+        + "conditions?: {/(and|or)/:[{[<fieldName>]: {operator: /(>|<|=|!=|>=|<=|like|in|except)/, value}}]}}"
+        + "fields: <fieldName>[]"
+        + "display: 'table'|'barchart'|'piechart'|'areachart'"
+    },
     {"role": "system", "content": "Available fields are:"},
     {"role": "system", "content": "{{dimension.columns[]}}"},
     {"role": "user", "content": `{{dimension.name}} whose {{dimension.numberColumns[0]}} is more than 5`},
-    {"role": "assistant", "content": `{conditions: {and:[{"{{dimension.numberColumns[0]}}":{operator:">", value: "5"}}]}}`},
+    {"role": "assistant", "content":
+      `{conditions: {and:[{"{{dimension.numberColumns[0]}}":{operator:">", value: "5"}}]}, fields:[{{dimension.quotedColumns[]}}], display: "table"}`
+    },
     {"role": "user", "content": `how many different {{dimension.columns[0]}} we have`},
-    {"role": "assistant", "content": `{groupBy: "{{dimension.columns[0]}}"}`},
+    {"role": "assistant", "content": `{groupBy: "{{dimension.columns[0]}}", aggregations: [{{dimension.columns[0]}}: "count"], fields:[{{dimension.columns[0]}}], display: "piechart"}`},
     {"role": "user", "content": `{{msg}}`},
   ],
 };

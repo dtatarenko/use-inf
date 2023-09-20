@@ -63,7 +63,7 @@ console.log("evil eval?", `(${res})`);
       }
     } catch(e) {
 console.log("\n\nOAI resolved in NoN JSON and in NoN JS-Object :\n\n", res, e);
-      throw new Error('OAI gave some random response: ' + res);
+      throw new Error(res);
     }
 console.log("\n\nOAI resolved \n\n", res);
     return {
