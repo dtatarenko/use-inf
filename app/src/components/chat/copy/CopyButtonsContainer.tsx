@@ -1,4 +1,5 @@
 import React, { useRef } from "react";
+import { CopyImageBtn } from "./CopyImageBtn";
 
 export type CopyButtonsContainerProps = {
   children: React.ReactNode;
