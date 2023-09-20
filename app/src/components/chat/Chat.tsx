@@ -9,6 +9,7 @@ import {ChartMessage} from './ChartMessage';
 import {TableMessage} from './TableMessage';
 import { ExecuteQuery } from '../executeQuery';
 import exampleData from "../../data/example-data";
+import { CopyButtonsContainer } from "../copy/CopyButtonsContainer";
 
 export const Chat = () => {
 	const [messages, addMessage] = useMessages();
@@ -18,11 +19,21 @@ export const Chat = () => {
 
 		qqRequest(text).then(answer => {
 			if (answer.chart) {
-				addMessage(<ChartMessage {...answer.chart} />, true);
+				addMessage(
+          <CopyButtonsContainer>
+            <ChartMessage {...answer.chart} />
+          </CopyButtonsContainer>,
+          true
+        );
 			} else if (answer.message) {
 				addMessage(<TextMessage text={answer.message}/>, true);
 			} else if (answer.table) {
-				addMessage(<TableMessage {...answer.table} />, true);
+				addMessage(
+          <CopyButtonsContainer>
+            <TableMessage {...answer.table} />
+          </CopyButtonsContainer>,
+          true
+        );
 			} else if (answer.debug === 'example-data') {
         addMessage(<ExecuteQuery {...(exampleData as any)} />, true);
       }

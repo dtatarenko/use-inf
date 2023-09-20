@@ -1,0 +1,17 @@
+.message-copy-wrapper .message-copy-buttons{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+}
+.message-copy-wrapper .message-copy-buttons .copy-button {
+  display: inline-block;
+  border-radius: 25px;
+  height: 25px;
+  width: 25px;
+  font-size: 25px;
+  line-height: 25px;
+  text-align: center;
+  vertical-align: middle;
+  background-color: aliceblue;
+  box-shadow: 1px 2px 1px;
+}

@@ -1,6 +1,7 @@
 export type cJAQLClause = {[fieldName: string]: {operator: '>'|'<'|'='|'!='|'>='|'<='|'like'|'in'|'exclude', value: string}};
 export type cJAQLCondition = cJAQLClause | {and?: cJAQLCondition[], or?:cJAQLCondition[]};
 export type cJAQL = {
+	datasource: string,
 	dimension: string,
 	groupBy?: string,
 	orderBy?: {[fieldName: string]: "desc" | "ask"}[],
