@@ -15,7 +15,7 @@ export const CopyButtonsContainer = ({children}: CopyButtonsContainerProps) => {
 }
 
 const CopyImageBtn = ({ref}: {ref: React.RefObject<HTMLDivElement>}) => {
-  const copyRefCanvas = (e) => {
+  const copyRefCanvas = () => {
     ref.current
   }
   return <div className="copy-button" onClick={copyRefCanvas}>🖼</div>;

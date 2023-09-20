@@ -9,7 +9,7 @@ import {ChartMessage} from './ChartMessage';
 import {TableMessage} from './TableMessage';
 import { ExecuteQuery } from '../executeQuery';
 import exampleData from "../../data/example-data";
-import { CopyButtonsContainer } from "../copy/CopyButtonsContainer";
+import { CopyButtonsContainer } from "./copy/CopyButtonsContainer";
 
 export const Chat = () => {
 	const [messages, addMessage] = useMessages();
