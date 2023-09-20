@@ -37,14 +37,16 @@
 }
 
 .message {
-  //border: 1px solid black;
   color: black;
-
-  align-self: flex-end;
+  margin-left: auto;
+  margin-right: 0;
 }
 
 .incomeMessage {
-  align-self: flex-start;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+  text-align:center;
 }
 
 .textMessage {
