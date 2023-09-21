@@ -10,8 +10,8 @@ export const CopyTableBtn = ({containerRef}: {containerRef: React.RefObject<HTML
       return;
     }
     
-    const tableCaptions =  document.querySelectorAll('.fixedDataTableLayout_rowsContainer > .fixedDataTableRowLayout_rowWrapper .fixedDataTableLayout_header .public_fixedDataTableCell_cellContent');
-    const tableData =  document.querySelectorAll('.fixedDataTableLayout_rowsContainer .fixedDataTableRowLayout_rowWrapper > .public_fixedDataTable_bodyRow .public_fixedDataTableCell_cellContent');
+    const tableCaptions =  containerRef.current.querySelectorAll('.fixedDataTableLayout_rowsContainer > .fixedDataTableRowLayout_rowWrapper .fixedDataTableLayout_header .public_fixedDataTableCell_cellContent');
+    const tableData =  containerRef.current.querySelectorAll('.fixedDataTableLayout_rowsContainer .fixedDataTableRowLayout_rowWrapper > .public_fixedDataTable_bodyRow .public_fixedDataTableCell_cellContent');
     
 
     const table = document.createElement("table");
