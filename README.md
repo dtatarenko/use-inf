@@ -1,7 +1,7 @@
 ##YOUR Sisense/Custom-SDK  Chat!!!
 [https://github.com/dtatarenko/use-inf](https://github.com/dtatarenko/use-inf)
 
-######from @useInf team 
+##from @useInf team 
 
 #### start example:
 
